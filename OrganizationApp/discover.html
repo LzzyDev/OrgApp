@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title></title>
+		<script src="js/mui.min.js"></script>
+		<link href="css/mui.min.css" rel="stylesheet" />
+		<link href="css/font-awesome.css" rel="stylesheet" />
+		<script type="text/javascript" charset="utf-8">
+			mui.init();
+		</script>
+	</head>
+
+	<body>
+		<!--<header class="mui-bar mui-bar-nav">
+			<h1 id="title" class="mui-title">发现</h1>
+		</header>-->
+		<div class="mui-content mui-scroll-wrapper" id="refreshContainer">
+			<div class="mui-scroll">
+				<ul id="MessageList" class="mui-table-view mui-table-view-chevron">
+					<li id="宝马车主" class="mui-table-view-cell mui-media">
+						<div class="mui-slider-right mui-disabled">
+							<a class="mui-btn mui-btn-red">删除</a>
+						</div>
+						<div class="mui-slider-handle">
+							<img class="mui-media-object mui-pull-left" src="image/60x60.gif" />
+							<div class="mui-media-body">
+								baoma
+								<p class="mui-ellipsis">自从用了车事帮，再也不用担心找不到4S店了</p>
+							</div>
+						</div>
+					</li>
+					<li id="奥迪车主" class="mui-table-view-cell mui-media">
+						<div class="mui-slider-right mui-disabled">
+							<a class="mui-btn mui-btn-red">删除</a>
+						</div>
+						<div class="mui-slider-handle">
+							<img class="mui-media-object mui-pull-left" src="image/60x60.gif" />
+							<div class="mui-media-body">
+								aodi
+								<p class="mui-ellipsis">自从用了车事帮，再也不用担心找不到4S店了</p>
+							</div>
+						</div>
+					</li>
+					<li id="雪弗兰车主" class="mui-table-view-cell mui-media">
+						<div class="mui-slider-right mui-disabled">
+							<a class="mui-btn mui-btn-red">删除</a>
+						</div>
+						<div class="mui-slider-handle">
+							<img class="mui-media-object mui-pull-left" src="image/60x60.gif" />
+							<div class="mui-media-body">
+								xuefulan
+								<p class="mui-ellipsis">自从用了车事帮，再也不用担心找不到4S店了</p>
+							</div>
+						</div>
+					</li>
+					<li id="捷豹车主" class="mui-table-view-cell mui-media">
+						<div class="mui-slider-right mui-disabled">
+							<a class="mui-btn mui-btn-red">删除</a>
+						</div>
+						<div class="mui-slider-handle">
+							<img class="mui-media-object mui-pull-left" src="image/60x60.gif" />
+							<div class="mui-media-body">
+								jiebao
+								<p class="mui-ellipsis">自从用了车事帮，再也不用担心找不到4S店了</p>
+							</div>
+						</div>
+					</li>
+					<li id="路虎车主" class="mui-table-view-cell mui-media">
+						<div class="mui-slider-right mui-disabled">
+							<a class="mui-btn mui-btn-red">删除</a>
+						</div>
+						<div class="mui-slider-handle">
+							<img class="mui-media-object mui-pull-left" src="image/60x60.gif" />
+							<div class="mui-media-body">
+								luhu
+								<p class="mui-ellipsis">自从用了车事帮，再也不用担心找不到4S店了</p>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<script>
+			mui.init({
+					swipeBack: false,
+					pullRefresh: {
+						container: '#refreshContainer',
+						down: {
+							contentdown: "下拉可以刷新",
+							contentover: "释放立即刷新",
+							contentrefresh: '正在加载...',
+							callback: pulldownRefresh
+						}
+					}
+				});
+				/**
+				 * 下拉刷新具体业务实现
+				 */
+				function pulldownRefresh() {
+					setTimeout(function() {
+						var table = document.body.querySelector('.mui-table-view');
+						var cells = document.body.querySelectorAll('.mui-table-view-cell');
+						for (var i = cells.length, len = i + 3; i < len; i++) {
+							var li = document.createElement('li');
+							li.className = 'mui-table-view-cell mui-media';
+							li.innerHTML = '<div class="mui-slider-right mui-disabled">'+
+							'<a class="mui-btn mui-btn-red">删除</a>'+
+						'</div>'+
+						'<div class="mui-slider-handle">'+
+							'<img class="mui-media-object mui-pull-left" src="image/60x60.gif" />'+
+							'<div class="mui-media-body">'+
+								'jiebao'+
+								'<p class="mui-ellipsis">自从用了车事帮，再也不用担心找不到4S店了</p>'+
+							'</div>'+
+						'</div>';
+							//下拉刷新，新纪录插到最前面；
+							table.insertBefore(li, table.firstChild);
+						}
+						mui('#refreshContainer').pullRefresh().endPulldownToRefresh(); //refresh completed
+					}, 1000);
+				}
+				var deceleration = mui.os.ios ? 0.003 : 0.0009;
+				mui('.mui-scroll-wrapper').scroll({
+					bounce: false,
+					indicators: true, //是否显示滚动条
+					deceleration: deceleration
+				});
+				// 向作滑动 的删除方法
+				var btnArray = ['确认', '取消'];
+				mui('#MessageList').on('tap', '.mui-btn', function(event) {
+					var elem = this;
+					var li = elem.parentNode.parentNode;
+					mui.confirm('确认删除该条记录？', '删除记录', btnArray, function(e) {
+						if (e.index == 0) {
+							li.parentNode.removeChild(li);
+						} else {
+							setTimeout(function() {
+								mui.swipeoutClose(li);
+							}, 0);
+						}
+					});
+				});
+		</script>
+	</body>
+
+</html>
