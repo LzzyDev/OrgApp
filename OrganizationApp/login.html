@@ -6,12 +6,12 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<title></title>
 		<script src="js/mui.min.js"></script>
+		<script src="js/md5.min.js"></script>
 		<link href="css/mui.min.css" rel="stylesheet" />
 		<style>
 			.area {
 				margin: 20px auto 0px auto;
 			}
-			
 			.mui-input-group {
 				margin-top: 10px;
 			}
@@ -72,33 +72,94 @@
 			}
 		</style>
 		<script>
-		mui.plusReady(function() {
-	//判断应用是否第一次启动
-	var showGuide = plus.storage.getItem("lauchFlag");
-	if (!showGuide) {
-		mui.openWindow({
-				url:'guide.html',
-				show:{
-					aniShow:'none'
-				},
-				waiting:{
-					autoShow:false
-				}
-			});
-			//延迟的原因：优先打开启动导航页面，避免资源争夺
-					setTimeout(function () {
-						//预加载
-						preload();
-					},200);
-		}else{
-			//有值，说明已经显示过了，无需显示；
+			mui.plusReady(function() {
+				//判断应用是否第一次启动
+				var showGuide = plus.storage.getItem("lauchFlag");
+				if (!showGuide) {
+					mui.openWindow({
+						url: 'guide.html',
+						show: {
+							aniShow: 'none'
+						},
+						waiting: {
+							autoShow: false
+						}
+					});
+					//延迟的原因：优先打开启动导航页面，避免资源争夺
+					setTimeout(function() {}, 200);
+				} else {
+					//有值，说明已经显示过了，无需显示；
 					//关闭splash页面；
 					plus.navigator.closeSplashscreen();
 					plus.navigator.setFullscreen(false);
-					//预加载
-					preload();
-		}
-		});
+					
+					function UserInfo() {};
+			 //清除登录信息
+			UserInfo.clear = function() {
+					plus.storage.removeItem('username');
+					plus.storage.removeItem('password');
+					plus.storage.removeItem('token');
+				}
+				//检查是否包含自动登录的信息
+			UserInfo.auto_login = function() {
+					var username = UserInfo.username();
+					var pwd = UserInfo.password();
+					if (!username || !pwd) {
+						plus.webview.currentWebview().show('slide-in-up');
+					}
+					mui.openWindow({
+				  url:'index.html'
+				});
+				}
+				//检查是否已登录
+			UserInfo.has_login = function() {
+				var username = UserInfo.username();
+				var pwd = UserInfo.password();
+				var token = UserInfo.token();
+				if (!username || !pwd || !token) {
+					plus.webview.currentWebview().show('slide-in-up');
+				}
+				mui.openWindow({
+				  url:'index.html'
+				});
+			};
+			UserInfo.username = function() {
+				if (arguments.length == 0) {
+					return plus.storage.getItem('username');
+				}
+				if (arguments[0] === '') {
+					plus.storage.removeItem('username');
+					return;
+				}
+				plus.storage.setItem('username', arguments[0]);
+			};
+			UserInfo.password = function() {
+				if (arguments.length == 0) {
+					return plus.storage.getItem('password');
+				}
+				if (arguments[0] === '') {
+					plus.storage.removeItem('password');
+					return;
+				}
+				plus.storage.setItem('password', arguments[0]);
+			};
+			UserInfo.token = function() {
+				if (arguments.length == 0) {
+					return plus.storage.getItem('token');
+				}
+				if (arguments[0] === '') {
+					plus.storage.removeItem('token');
+					return;
+				}
+				plus.storage.setItem('token', arguments[0]);
+			};
+			if (UserInfo.has_login()) {
+				//打开需要展示给用户的页面，或者是调用远端接口
+			} else {
+				plus.webview.currentWebview().show('slide-in-up'); //从底部向上滑出登录页面
+			}
+				}
+			});
 		</script>
 	</head>
 
@@ -109,10 +170,10 @@
 		<div class="mui-content">
 			<form id='login-form'>
 				<div class="mui-input-row">
-					<input id='phone' type="text" class="mui-input-clear mui-input" placeholder="请输入手机号">
+					<input id='username' name="username" type="text" class="mui-input-clear mui-input" placeholder="请输入用户名">
 				</div>
 				<div class="mui-input-row">
-					<input id='vcode' type="text" class="mui-input-clear mui-input" placeholder="请输入验证码">
+					<input id='password' name="password" type="password" class="mui-input-clear mui-input" placeholder="请输入密码">
 				</div>
 			</form>
 			<form class="mui-input-group">
@@ -132,30 +193,83 @@
 
 			</div>
 		</div>
-<script>
-    	var first = null;
-mui.back = function() {
-    //首次按键，提示‘再按一次退出应用’
-    if (!first) {
-        first = new Date().getTime();
-        mui.toast('再按一次退出应用');
-        setTimeout(function() {
-            first = null;
-        }, 1000);
-    } else {
-        if (new Date().getTime() - first < 1000) {
-            plus.runtime.quit();
-        }
-    }
+		<script>
+			var first = null;
+			mui.back = function() {
+				//首次按键，提示‘再按一次退出应用’
+				if (!first) {
+					first = new Date().getTime();
+					mui.toast('再按一次退出应用');
+					setTimeout(function() {
+						first = null;
+					}, 1000);
+				} else {
+					if (new Date().getTime() - first < 1000) {
+						plus.runtime.quit();
+					}
+				}
+			};
+			mui.web_query = function(func_url, params, onSuccess, onError, retry) {
+				var onSuccess = arguments[2] ? arguments[2] : function() {};
+				var onError = arguments[3] ? arguments[3] : function() {};
+				var retry = arguments[4] ? arguments[4] : 3;
+				func_url = 'http://www.xxxxxx.com/ajax/?fn=' + func_url;
+								mui.ajax(func_url, {
+									data: params,
+									dataType: 'json',
+									type: 'post',
+									timeout: 3000,
+									success: function(data) {
+										if (data.err === 'ok') {
+											onSuccess(data);
+										} else {
+											onError(data.code);
+										}
+									},
+									error: function(xhr, type, errorThrown) {
+										retry--;
+										if (retry > 0) return mui.web_query(func_url, params, onSuccess, onError, retry);
+										onError('FAILED_NETWORK');
+									}
+								})
+			};;
 
-};
-
-document.getElementById("login").addEventListener('tap',function(){
-  mui.openWindow({
-    url:'index.html'
-  });
-});
-    </script>
+			
+			document.getElementById("login").addEventListener('tap', function() {
+				function get_pwd_hash(pwd) {
+						var salt = 'hbuilder'; //此处的salt是为了避免黑客撞库，而在md5之前对原文做一定的变形，可以设为自己喜欢的，只要和服务器验证时的salt一致即可。
+						return md5(salt + pwd); //此处假设你已经引用了md5相关的库，比如github上的JavaScript-MD5
+					}
+					//这里假设你已经通过DOM操作获取到了用户名和密码，分别保存在username和password变量中。
+				var username = xxx;
+				var password = xxx;
+				var pwd_hash = get_pwd_hash(password);
+				var onSuccess = function(data) {
+					UserInfo.username(username);
+					UserInfo.password(pwd_hash);
+					UserInfo.token(data.token); //把获取到的token保存到storage中
+					var wc = plus.webview.currentWebview();
+					wc.hide('slide-out-bottom'); //此处假设是隐藏登录页回到之前的页面，实际你也可以干点儿别的
+				}
+				var onError = function(errcode) {
+					switch (errcode) {
+						case 'INCORRECT_PASSWORD':
+							mui.toast('密码不正确');
+							break;
+						case 'USER_NOT_EXISTS':
+							mui.toast('用户尚未注册');
+							break;
+					}
+				}
+//				mui.web_query('get_token', {
+//					username: username,
+//					password: pwd_hash
+//				}, onSuccess, onError, 3);
+				mui.openWindow({
+				  url:'index.html'
+				});
+			});
+		</script>
 	</body>
 
 </html>
