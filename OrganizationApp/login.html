@@ -105,11 +105,14 @@
 					var username = UserInfo.username();
 					var pwd = UserInfo.password();
 					if (!username || !pwd) {
-						plus.webview.currentWebview().show('slide-in-up');
+						
 					}
-					mui.openWindow({
+					else{
+						mui.openWindow({
 				  url:'index.html'
 				});
+					}
+					
 				}
 				//检查是否已登录
 			UserInfo.has_login = function() {
@@ -117,11 +120,14 @@
 				var pwd = UserInfo.password();
 				var token = UserInfo.token();
 				if (!username || !pwd || !token) {
-					plus.webview.currentWebview().show('slide-in-up');
+					
 				}
-				mui.openWindow({
+				else{
+					mui.openWindow({
 				  url:'index.html'
 				});
+				}
+				
 			};
 			UserInfo.username = function() {
 				if (arguments.length == 0) {
@@ -209,7 +215,10 @@
 					}
 				}
 			};
-			mui.web_query = function(func_url, params, onSuccess, onError, retry) {
+			
+			document.getElementById("login").addEventListener('tap', function() {
+				
+				mui.web_query = function(func_url, params, onSuccess, onError, retry) {
 				var onSuccess = arguments[2] ? arguments[2] : function() {};
 				var onError = arguments[3] ? arguments[3] : function() {};
 				var retry = arguments[4] ? arguments[4] : 3;
@@ -232,10 +241,8 @@
 										onError('FAILED_NETWORK');
 									}
 								})
-			};;
-
-			
-			document.getElementById("login").addEventListener('tap', function() {
+			};
+				
 				function get_pwd_hash(pwd) {
 						var salt = 'hbuilder'; //此处的salt是为了避免黑客撞库，而在md5之前对原文做一定的变形，可以设为自己喜欢的，只要和服务器验证时的salt一致即可。
 						return md5(salt + pwd); //此处假设你已经引用了md5相关的库，比如github上的JavaScript-MD5
