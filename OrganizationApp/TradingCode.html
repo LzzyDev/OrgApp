@@ -23,7 +23,7 @@
 	</head>
 
 	<body>
-	<header class="mui-bar mui-bar-nav">
+		<header class="mui-bar mui-bar-nav">
 			<h1 id="title" class="mui-title">验证</h1>
 		</header>
 		<div class="mui-content">
@@ -32,10 +32,31 @@
 			</div>
 			<!-- Table -->
 			<div class="panel-body">
-				<input onkeyup="value=value.replace(/[^\d]/g,'')" onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\d]/g,''))" type="text" class="mui-input" id="SendCode" placeholder="请输入消费码">
+				<input onkeyup="value=value.replace(/[^\d]/g,'')" onbeforepaste="clipboardData.setData('text',clipboardData.getData('text').replace(/[^\d]/g,''))" type="text" class="mui-input mui-input-clear" id="SendCode" placeholder="请输入消费码">
 				<button class="mui-btn mui-btn-primary mui-pull-right" contenteditable="true" type="button">验证</button>
 			</div>
 		</div>
+		<script type="text/javascript">
+			mui(".panel-body").on("tap",".mui-btn",function(){
+				var code=document.getElementById("SendCode");
+				if(code.valueOf()==''||code.valueOf()==null){
+					mui.alert("请输入正确的消费码");
+				}
+				else{
+					var btnArray=['取消','确定'];
+				mui.confirm('是否提交此消费码','',btnArray,function(e){
+					if(e.index==1){
+						code.innerHTML="";
+						mui.toast("验证成功");
+					}
+					else{
+						
+					}
+				});
+				}
+				
+			})
+		</script>
 	</body>
 
 </html>

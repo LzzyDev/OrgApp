@@ -248,8 +248,8 @@
 						return md5(salt + pwd); //此处假设你已经引用了md5相关的库，比如github上的JavaScript-MD5
 					}
 					//这里假设你已经通过DOM操作获取到了用户名和密码，分别保存在username和password变量中。
-				var username = xxx;
-				var password = xxx;
+				var username = document.getElementById("username").valueOf();
+				var password = document.getElementById("password").valueOf();
 				var pwd_hash = get_pwd_hash(password);
 				var onSuccess = function(data) {
 					UserInfo.username(username);
