@@ -211,7 +211,7 @@
 							</ul>
 							<ul class="mui-table-view">
 								<li class="mui-table-view-cell" style="text-align: center;color: red;">
-									<a>退出登录</a>
+									<a id="outlogin">退出登录</a>
 								</li>
 							</ul>
 						</div>
@@ -514,7 +514,17 @@
 				indicators: true, //是否显示滚动条
 				deceleration: deceleration
 			});
-			 // 分享链接点击事件
+			mui(".mui.mui-table-view-cell").on("tap","#outlogin",function(){
+				var logintab=plus.webview.getWebviewById("login");
+				var all=plus.webview.all();
+				logintab.show("pop-in");
+				for(var i=0,len=all;i<len;i++){
+					if(all[i].getURL()==logintab.getURL())
+					break;
+					plus.webview.close(all[i]);
+				}
+			})
+			// 分享链接点击事件
 			document.getElementById("share").addEventListener('tap', function() {
 				var ids = [{
 						id: "weixin",

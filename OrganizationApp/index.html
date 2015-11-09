@@ -60,7 +60,10 @@
 						mui.extend(aniShow,temp);
 					}
 					self.append(sub);
-				}
+				};
+				var user=plus.storage.getItem("username");
+						var pwd=plus.storage.getItem("password");
+						console.log("Storage:Username:"+user+",password:"+pwd);
 			});
 			 //当前激活选项
 			var activeTab = subpages[0];
