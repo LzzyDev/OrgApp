@@ -6,7 +6,7 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<title></title>
 		<script src="js/mui.min.js"></script>
-		<script src="js/md5.min.js"></script>
+		<script src="js/A2D.js"></script>
 		<link href="css/mui.min.css" rel="stylesheet" />
 		<style>
 			.area {
@@ -105,198 +105,195 @@
 		</div>
 		<script>
 			function UserInfo() {};
-				mui.plusReady(function() {
-					//判断应用是否第一次启动
-					var showGuide = plus.storage.getItem("lauchFlag");
-					if (!showGuide) {
-						mui.openWindow({
-							url: 'guide.html',
-							show: {
-								aniShow: 'none'
-							},
-							waiting: {
-								autoShow: false
-							}
-						});
-						//延迟的原因：优先打开启动导航页面，避免资源争夺
-						setTimeout(function() {}, 200);
-					} else {
-						//有值，说明已经显示过了，无需显示；
-						//关闭splash页面；
-						plus.navigator.closeSplashscreen();
-						plus.navigator.setFullscreen(false);
-						
-						var user=plus.storage.getItem("username");
-						var pwd=plus.storage.getItem("password");
-						if(!user||user==""||!pwd||pwd==""){
-
-						}else{
-							if(!plus.webview.currentWebview().id||plus.webview.currentWebview().id==undefined||plus.webview.currentWebview().id==""){
-							plus.webview.currentWebview().id="login";
-							}
-							plus.webview.currentWebview().hide();
-							mui.openWindow({
-										url: 'index.html'
-									});
+			mui.plusReady(function() {
+				//判断应用是否第一次启动
+				var showGuide = plus.storage.getItem("lauchFlag");
+				if (!showGuide) {
+					mui.openWindow({
+						url: 'guide.html',
+						show: {
+							aniShow: 'none'
+						},
+						waiting: {
+							autoShow: false
 						}
-	
-						//检查是否包含自动登录的信息
-						UserInfo.auto_login = function() {
-								var username = UserInfo.username();
-								var pwd = UserInfo.password();
-								if (!username || !pwd) {} else {
-									mui.openWindow({
-										url: 'index.html'
-									});
-								}
-							}
-							//检查是否已登录
-						UserInfo.has_login = function() {
+					});
+					//延迟的原因：优先打开启动导航页面，避免资源争夺
+					setTimeout(function() {}, 200);
+				} else {
+					//有值，说明已经显示过了，无需显示；
+					//关闭splash页面；
+					plus.navigator.closeSplashscreen();
+					plus.navigator.setFullscreen(false);
+					var user = plus.storage.getItem("username");
+					var pwd = plus.storage.getItem("password");
+					if (!user || user == "" || !pwd || pwd == "") {} else {
+//						mui.ajax('http://server-name/login.php', {
+//						data: {
+//							user: 'username',
+//							pwd: 'password'
+//						},
+//						dataType: 'json', //服务器返回json格式数据
+//						type: 'post', //HTTP请求类型
+//						timeout: 10000, //超时时间设置为10秒；
+//						success: function(data) {
+//							//服务器返回响应，根据响应结果，分析是否登录成功；
+//							mui.openWindow({
+//							url: 'index.html'
+//						});
+//						},
+//						error: function(xhr, type, errorThrown) {
+//							//异常处理；
+//							console.log(type);
+//						}
+//					});
+						mui.openWindow({
+							url: 'index.html'
+						});
+					}
+					//检查是否包含自动登录的信息
+					UserInfo.auto_login = function() {
 							var username = UserInfo.username();
 							var pwd = UserInfo.password();
-							var token = UserInfo.token();
-							if (!username || !pwd || !token) {} else {
+							if (!username || !pwd) {} else {
 								mui.openWindow({
 									url: 'index.html'
 								});
 							}
-						};
-					}
-				});
-				 //清除登录信息
-				UserInfo.clear = function() {
-					plus.storage.removeItem('username');
-					plus.storage.removeItem('password');
-					plus.storage.removeItem('token');
-				}
-				UserInfo.username = function() {
-					if (arguments.length == 0) {
-						return plus.storage.getItem('username');
-					}
-					if (arguments[0] === '') {
-						plus.storage.removeItem('username');
-						return;
-					}
-					plus.storage.setItem('username', arguments[0]);
-				};
-				UserInfo.password = function() {
-					if (arguments.length == 0) {
-						return plus.storage.getItem('password');
-					}
-					if (arguments[0] === '') {
-						plus.storage.removeItem('password');
-						return;
-					}
-					plus.storage.setItem('password', arguments[0]);
-				};
-				UserInfo.token = function() {
-					if (arguments.length == 0) {
-						return plus.storage.getItem('token');
-					}
-					if (arguments[0] === '') {
-						plus.storage.removeItem('token');
-						return;
-					}
-					plus.storage.setItem('token', arguments[0]);
-				};
-				var first = null;
-				mui.back = function() {
-					//首次按键，提示‘再按一次退出应用’
-					if (!first) {
-						first = new Date().getTime();
-						mui.toast('再按一次退出应用');
-						setTimeout(function() {
-							first = null;
-						}, 1000);
-					} else {
-						if (new Date().getTime() - first < 1000) {
-							plus.runtime.quit();
 						}
-					}
-				};
-				document.getElementById("login").addEventListener('tap', function() {
-					mui.web_query = function(func_url, params, onSuccess, onError, retry) {
-						var onSuccess = arguments[2] ? arguments[2] : function() {};
-						var onError = arguments[3] ? arguments[3] : function() {};
-						var retry = arguments[4] ? arguments[4] : 3;
-						var isAutoLogin = document.getElementById("autoLogin").classList.contains("mui-active");
-						func_url = 'http://www.xxxxxx.com/ajax/?fn=' + func_url;
-														mui.ajax(func_url, {
-															data: params,
-															dataType: 'json',
-															type: 'post',
-															timeout: 3000,
-															success: function(data) {
-																if (data.err === 'ok') {
-																	onSuccess(data);
-																} else {
-																	onError(data.code);
-																}
-															},
-															error: function(xhr, type, errorThrown) {
-																retry--;
-																if (retry > 0) return mui.web_query(func_url, params, onSuccess, onError, retry);
-																onError('FAILED_NETWORK');
-															}
-														})
-						
+						//检查是否已登录
+					UserInfo.has_login = function() {
+						var username = UserInfo.username();
+						var pwd = UserInfo.password();
+						var token = UserInfo.token();
+						if (!username || !pwd || !token) {} else {
+							mui.openWindow({
+								url: 'index.html'
+							});
+						}
 					};
-	
-					function get_pwd_hash(pwd) {
-							return md5(pwd); //此处假设你已经引用了md5相关的库，比如github上的JavaScript-MD5
-						}
-						//这里假设你已经通过DOM操作获取到了用户名和密码，分别保存在username和password变量中。
-					var username = document.getElementById("username").value;
-					var password = document.getElementById("password").value;
-					var pwd_hash = get_pwd_hash(password);
-					var onSuccess = function(data) {
-						UserInfo.username(username);
-						UserInfo.password(pwd_hash);
-						UserInfo.token(data.token); //把获取到的token保存到storage中
-						var wc = plus.webview.currentWebview();
-						wc.hide('slide-out-bottom'); //此处假设是隐藏登录页回到之前的页面，实际你也可以干点儿别的
+				}
+			});
+			 //清除登录信息
+			UserInfo.clear = function() {
+				plus.storage.removeItem('username');
+				plus.storage.removeItem('password');
+				plus.storage.removeItem('token');
+			}
+			UserInfo.username = function() {
+				if (arguments.length == 0) {
+					return plus.storage.getItem('username');
+				}
+				if (arguments[0] === '') {
+					plus.storage.removeItem('username');
+					return;
+				}
+				plus.storage.setItem('username', arguments[0]);
+			};
+			UserInfo.password = function() {
+				if (arguments.length == 0) {
+					return plus.storage.getItem('password');
+				}
+				if (arguments[0] === '') {
+					plus.storage.removeItem('password');
+					return;
+				}
+				plus.storage.setItem('password', arguments[0]);
+			};
+			UserInfo.token = function() {
+				if (arguments.length == 0) {
+					return plus.storage.getItem('token');
+				}
+				if (arguments[0] === '') {
+					plus.storage.removeItem('token');
+					return;
+				}
+				plus.storage.setItem('token', arguments[0]);
+			};
+			var first = null;
+			mui.back = function() {
+				//首次按键，提示‘再按一次退出应用’
+				if (!first) {
+					first = new Date().getTime();
+					mui.toast('再按一次退出应用');
+					setTimeout(function() {
+						first = null;
+					}, 1000);
+				} else {
+					if (new Date().getTime() - first < 1000) {
+						plus.runtime.quit();
 					}
-					var onError = function(errcode) {
-						switch (errcode) {
-							case 'INCORRECT_PASSWORD':
-								mui.toast('密码不正确');
-								break;
-							case 'USER_NOT_EXISTS':
-								mui.toast('用户尚未注册');
-								break;
-						}
+				}
+			};
+			document.getElementById("login").addEventListener('tap', function() {
+				function get_pwd_hash(pwd) {
+						return $.DES.encrypt(pwd); //此处假设你已经引用了md5相关的库，比如github上的JavaScript-MD5
 					}
-	//				mui.web_query('get_token', {
-	//					username: username,
-	//					password: pwd_hash
-	//				}, onSuccess, onError, 3);
-	if(!username||username==""||!password||password==""){
-		mui.alert("用户名或密码不能为空");
-		return;
-	}
-	var autoLogin=document.getElementById("autoLogin").classList.contains("mui-active");
-	if(autoLogin){
-		var myDate=new Date();
-		plus.storage.setItem("username",username);
-		plus.storage.setItem("password",pwd_hash);
-		if(!plus.webview.currentWebview().id||plus.webview.currentWebview().id==undefined||plus.webview.currentWebview().id==""){
-							plus.webview.currentWebview().id="login";
-							}
-		plus.webview.currentWebview().hide();
-		mui.openWindow({
-									  url:'index.html'
-									});
-	}else{
-		if(!plus.webview.currentWebview().id||plus.webview.currentWebview().id==undefined||plus.webview.currentWebview().id==""){
-							plus.webview.currentWebview().id="login";
-							}
-		plus.webview.currentWebview().hide();
-		mui.openWindow({
-									  url:'index.html'
-									});
-	}
-									
-				});
+					//这里假设你已经通过DOM操作获取到了用户名和密码，分别保存在username和password变量中。
+				var username = document.getElementById("username").value;
+				var password = document.getElementById("password").value;
+				var pwd_hash = get_pwd_hash(password);
+				if (!username || username == "" || !password || password == "") {
+					mui.alert("用户名或密码不能为空");
+					return;
+				}
+				var autoLogin = document.getElementById("autoLogin").classList.contains("mui-active");
+				if (autoLogin) {
+//					mui.ajax('http://server-name/login.php', {
+//						data: {
+//							username: 'username',
+//							pwd_hash: 'password'
+//						},
+//						dataType: 'json', //服务器返回json格式数据
+//						type: 'post', //HTTP请求类型
+//						timeout: 10000, //超时时间设置为10秒；
+//						success: function(data) {
+//							//服务器返回响应，根据响应结果，分析是否登录成功；
+//							plus.storage.setItem("username", username);
+//							plus.storage.setItem("password", pwd_hash);
+//							mui.openWindow({
+//								url: 'index.html'
+//							});
+//						},
+//						error: function(xhr, type, errorThrown) {
+//							//异常处理；
+//							console.log(type);
+//						}
+//					});
+					plus.storage.setItem("username", username);
+					plus.storage.setItem("password", pwd_hash);
+					mui.openWindow({
+						url: 'index.html'
+					});
+				} else {
+//					mui.ajax('http://server-name/login.php', {
+//						data: {
+//							username: 'username',
+//							pwd_hash: 'password'
+//						},
+//						dataType: 'json', //服务器返回json格式数据
+//						type: 'post', //HTTP请求类型
+//						timeout: 10000, //超时时间设置为10秒；
+//						success: function(data) {
+//							//服务器返回响应，根据响应结果，分析是否登录成功；
+//							plus.storage.removeItem("username");
+//							plus.storage.removeItem("password");
+//							mui.openWindow({
+//								url: 'index.html'
+//							});
+//						},
+//						error: function(xhr, type, errorThrown) {
+//							//异常处理；
+//							console.log(type);
+//						}
+//					});
+					plus.storage.removeItem("username");
+					plus.storage.removeItem("password");
+					mui.openWindow({
+						url: 'index.html'
+					});
+				}
+			});
 		</script>
 	</body>
 
