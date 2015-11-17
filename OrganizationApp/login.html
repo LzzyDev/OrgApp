@@ -6,7 +6,7 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
 		<title></title>
 		<script src="js/mui.min.js"></script>
-		<script src="js/A2D.js"></script>
+		<script src="js/Des.js"></script>
 		<link href="css/mui.min.css" rel="stylesheet" />
 		<style>
 			.area {
@@ -226,72 +226,79 @@
 				}
 			};
 			document.getElementById("login").addEventListener('tap', function() {
-				function get_pwd_hash(pwd) {
-						return $.DES.encrypt(pwd); //此处假设你已经引用了md5相关的库，比如github上的JavaScript-MD5
+				function get_pwd_hash(pwd,username) {
+						return jsencrypt(pwd,username); 
 					}
 					//这里假设你已经通过DOM操作获取到了用户名和密码，分别保存在username和password变量中。
 				var username = document.getElementById("username").value;
 				var password = document.getElementById("password").value;
-				var pwd_hash = get_pwd_hash(password);
+				var pwd_hash = get_pwd_hash(password,username);
 				if (!username || username == "" || !password || password == "") {
 					mui.alert("用户名或密码不能为空");
 					return;
 				}
 				var autoLogin = document.getElementById("autoLogin").classList.contains("mui-active");
 				if (autoLogin) {
-//					mui.ajax('http://server-name/login.php', {
-//						data: {
-//							username: 'username',
-//							pwd_hash: 'password'
-//						},
-//						dataType: 'json', //服务器返回json格式数据
-//						type: 'post', //HTTP请求类型
-//						timeout: 10000, //超时时间设置为10秒；
-//						success: function(data) {
-//							//服务器返回响应，根据响应结果，分析是否登录成功；
-//							plus.storage.setItem("username", username);
-//							plus.storage.setItem("password", pwd_hash);
-//							mui.openWindow({
-//								url: 'index.html'
-//							});
-//						},
-//						error: function(xhr, type, errorThrown) {
-//							//异常处理；
-//							console.log(type);
-//						}
-//					});
-					plus.storage.setItem("username", username);
-					plus.storage.setItem("password", pwd_hash);
-					mui.openWindow({
-						url: 'index.html'
+					mui.ajax('http://120.25.60.120/api/Organization/Login', {
+						data: {
+							username: 'userName',
+							pwd_hash: 'password'
+						},
+						dataType: 'json', //服务器返回json格式数据
+						type: 'post', //HTTP请求类型
+						timeout: 10000, //超时时间设置为10秒；
+						success: function(data) {
+							//服务器返回响应，根据响应结果，分析是否登录成功；
+							plus.storage.setItem("username", username);
+							plus.storage.setItem("password", pwd_hash);
+							mui.openWindow({
+								url: 'index.html'
+							});
+						},
+						error: function(xhr, type, errorThrown) {
+							//异常处理；
+							console.log(type);
+						}
 					});
+//					plus.storage.setItem("username", username);
+//					plus.storage.setItem("password", pwd_hash);
+//					mui.openWindow({
+//						url: 'index.html'
+//					});
 				} else {
-//					mui.ajax('http://server-name/login.php', {
-//						data: {
-//							username: 'username',
-//							pwd_hash: 'password'
-//						},
-//						dataType: 'json', //服务器返回json格式数据
-//						type: 'post', //HTTP请求类型
-//						timeout: 10000, //超时时间设置为10秒；
-//						success: function(data) {
-//							//服务器返回响应，根据响应结果，分析是否登录成功；
-//							plus.storage.removeItem("username");
-//							plus.storage.removeItem("password");
-//							mui.openWindow({
-//								url: 'index.html'
-//							});
-//						},
-//						error: function(xhr, type, errorThrown) {
-//							//异常处理；
-//							console.log(type);
-//						}
-//					});
-					plus.storage.removeItem("username");
-					plus.storage.removeItem("password");
-					mui.openWindow({
-						url: 'index.html'
+					mui.ajax('http://server-name/login.php', {
+						data: {
+							username: 'userName',
+							pwd_hash: 'password'
+						},
+						dataType: 'json', //服务器返回json格式数据
+						type: 'post', //HTTP请求类型
+						timeout: 10000, //超时时间设置为10秒；
+						success: function(data) {
+							//服务器返回响应，根据响应结果，分析是否登录成功；
+							if(data.success)
+							{
+								plus.storage.removeItem("username");
+							plus.storage.removeItem("password");
+							mui.openWindow({
+								url: 'index.html'
+							});
+							}
+							else
+							{
+								mui.toast(data.message);
+							}
+						},
+						error: function(xhr, type, errorThrown) {
+							//异常处理；
+							console.log(type);
+						}
 					});
+//					plus.storage.removeItem("username");
+//					plus.storage.removeItem("password");
+//					mui.openWindow({
+//						url: 'index.html'
+//					});
 				}
 			});
 		</script>
