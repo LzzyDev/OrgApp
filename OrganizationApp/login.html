@@ -128,28 +128,37 @@
 					var user = plus.storage.getItem("username");
 					var pwd = plus.storage.getItem("password");
 					if (!user || user == "" || !pwd || pwd == "") {} else {
-//						mui.ajax('http://server-name/login.php', {
-//						data: {
-//							user: 'username',
-//							pwd: 'password'
-//						},
-//						dataType: 'json', //服务器返回json格式数据
-//						type: 'post', //HTTP请求类型
-//						timeout: 10000, //超时时间设置为10秒；
-//						success: function(data) {
-//							//服务器返回响应，根据响应结果，分析是否登录成功；
-//							mui.openWindow({
+						mui.ajax('http://server-name/login.php', {
+						data: {
+							user: 'username',
+							pwd: 'password'
+						},
+						dataType: 'json', //服务器返回json格式数据
+						type: 'post', //HTTP请求类型
+						timeout: 10000, //超时时间设置为10秒；
+						success: function(data) {
+							//服务器返回响应，根据响应结果，分析是否登录成功；
+							if(data.success)
+							{
+								plus.storage.removeItem("username");
+							plus.storage.removeItem("password");
+							mui.openWindow({
+								url: 'index.html'
+							});
+							}
+							else
+							{
+								mui.toast(data.message);
+							}
+						},
+						error: function(xhr, type, errorThrown) {
+							//异常处理；
+							console.log(type);
+						}
+					});
+//						mui.openWindow({
 //							url: 'index.html'
 //						});
-//						},
-//						error: function(xhr, type, errorThrown) {
-//							//异常处理；
-//							console.log(type);
-//						}
-//					});
-						mui.openWindow({
-							url: 'index.html'
-						});
 					}
 					//检查是否包含自动登录的信息
 					UserInfo.auto_login = function() {
@@ -249,11 +258,18 @@
 						timeout: 10000, //超时时间设置为10秒；
 						success: function(data) {
 							//服务器返回响应，根据响应结果，分析是否登录成功；
-							plus.storage.setItem("username", username);
-							plus.storage.setItem("password", pwd_hash);
+							if(data.success)
+							{
+								plus.storage.setItem("username");
+							plus.storage.setItem("password");
 							mui.openWindow({
 								url: 'index.html'
 							});
+							}
+							else
+							{
+								mui.toast(data.message);
+							}
 						},
 						error: function(xhr, type, errorThrown) {
 							//异常处理；
