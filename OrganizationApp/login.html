@@ -127,12 +127,9 @@
 					plus.navigator.setFullscreen(false);
 					var user = plus.storage.getItem("username");
 					var pwd = plus.storage.getItem("password");
+					var url='http://api.cheshibang.com/api/Organization/Login?userName='+user+'&password='+pwd;
 					if (!user || user == "" || !pwd || pwd == "") {} else {
-						mui.ajax('http://server-name/login.php', {
-						data: {
-							user: 'username',
-							pwd: 'password'
-						},
+						mui.ajax(url, {
 						dataType: 'json', //服务器返回json格式数据
 						type: 'post', //HTTP请求类型
 						timeout: 10000, //超时时间设置为10秒；
@@ -153,7 +150,7 @@
 						},
 						error: function(xhr, type, errorThrown) {
 							//异常处理；
-							console.log(type);
+							mui.toast(xhr.response);
 						}
 					});
 //						mui.openWindow({
@@ -235,24 +232,18 @@
 				}
 			};
 			document.getElementById("login").addEventListener('tap', function() {
-				function get_pwd_hash(pwd,username) {
-						return jsencrypt(pwd,username); 
-					}
 					//这里假设你已经通过DOM操作获取到了用户名和密码，分别保存在username和password变量中。
 				var username = document.getElementById("username").value;
 				var password = document.getElementById("password").value;
-				var pwd_hash = get_pwd_hash(password,username);
+				var pwd = jsencrypt('123@Abc',password); 
 				if (!username || username == "" || !password || password == "") {
 					mui.alert("用户名或密码不能为空");
 					return;
 				}
 				var autoLogin = document.getElementById("autoLogin").classList.contains("mui-active");
+				var url='http://api.cheshibang.com/api/Organization/Login?userName='+username+'&password='+pwd;
 				if (autoLogin) {
-					mui.ajax('http://120.25.60.120/api/Organization/Login', {
-						data: {
-							username: 'userName',
-							pwd_hash: 'password'
-						},
+					mui.ajax(url, {
 						dataType: 'json', //服务器返回json格式数据
 						type: 'post', //HTTP请求类型
 						timeout: 10000, //超时时间设置为10秒；
@@ -260,8 +251,8 @@
 							//服务器返回响应，根据响应结果，分析是否登录成功；
 							if(data.success)
 							{
-								plus.storage.setItem("username");
-							plus.storage.setItem("password");
+								plus.storage.setItem("username",username);
+							plus.storage.setItem("password",pwd);
 							mui.openWindow({
 								url: 'index.html'
 							});
@@ -273,7 +264,7 @@
 						},
 						error: function(xhr, type, errorThrown) {
 							//异常处理；
-							console.log(type);
+							mui.toast(xhr.response);
 						}
 					});
 //					plus.storage.setItem("username", username);
@@ -282,11 +273,7 @@
 //						url: 'index.html'
 //					});
 				} else {
-					mui.ajax('http://server-name/login.php', {
-						data: {
-							username: 'userName',
-							pwd_hash: 'password'
-						},
+					mui.ajax(url, {
 						dataType: 'json', //服务器返回json格式数据
 						type: 'post', //HTTP请求类型
 						timeout: 10000, //超时时间设置为10秒；
@@ -307,7 +294,7 @@
 						},
 						error: function(xhr, type, errorThrown) {
 							//异常处理；
-							console.log(type);
+							mui.toast(xhr.response);
 						}
 					});
 //					plus.storage.removeItem("username");
