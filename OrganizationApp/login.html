@@ -134,20 +134,11 @@
 						dataType: 'json', //服务器返回json格式数据
 						type: 'post', //HTTP请求类型
 						timeout: 10000, //超时时间设置为10秒；
-						success: function(data) {
+						success: function(data,textStatus,xhr) {
 							//服务器返回响应，根据响应结果，分析是否登录成功；
-							if(data.success)
-							{
-								plus.storage.removeItem("username");
-							plus.storage.removeItem("password");
 							mui.openWindow({
 								url: 'index.html'
 							});
-							}
-							else
-							{
-								mui.toast(data.message);
-							}
 						},
 						error: function(xhr, type, errorThrown) {
 							//异常处理；
@@ -158,65 +149,9 @@
 //							url: 'index.html'
 //						});
 					}
-					//检查是否包含自动登录的信息
-					UserInfo.auto_login = function() {
-							var username = UserInfo.username();
-							var pwd = UserInfo.password();
-							if (!username || !pwd) {} else {
-								mui.openWindow({
-									url: 'index.html'
-								});
-							}
-						}
-						//检查是否已登录
-					UserInfo.has_login = function() {
-						var username = UserInfo.username();
-						var pwd = UserInfo.password();
-						var token = UserInfo.token();
-						if (!username || !pwd || !token) {} else {
-							mui.openWindow({
-								url: 'index.html'
-							});
-						}
-					};
 				}
 			});
-			 //清除登录信息
-			UserInfo.clear = function() {
-				plus.storage.removeItem('username');
-				plus.storage.removeItem('password');
-				plus.storage.removeItem('token');
-			}
-			UserInfo.username = function() {
-				if (arguments.length == 0) {
-					return plus.storage.getItem('username');
-				}
-				if (arguments[0] === '') {
-					plus.storage.removeItem('username');
-					return;
-				}
-				plus.storage.setItem('username', arguments[0]);
-			};
-			UserInfo.password = function() {
-				if (arguments.length == 0) {
-					return plus.storage.getItem('password');
-				}
-				if (arguments[0] === '') {
-					plus.storage.removeItem('password');
-					return;
-				}
-				plus.storage.setItem('password', arguments[0]);
-			};
-			UserInfo.token = function() {
-				if (arguments.length == 0) {
-					return plus.storage.getItem('token');
-				}
-				if (arguments[0] === '') {
-					plus.storage.removeItem('token');
-					return;
-				}
-				plus.storage.setItem('token', arguments[0]);
-			};
+			 
 			var first = null;
 			mui.back = function() {
 				//首次按键，提示‘再按一次退出应用’
@@ -236,32 +171,26 @@
 					//这里假设你已经通过DOM操作获取到了用户名和密码，分别保存在username和password变量中。
 				var username = document.getElementById("username").value;
 				var password = document.getElementById("password").value;
-				var pwd = jsencrypt('123@Abc',password); 
+
 				if (!username || username == "" || !password || password == "") {
 					mui.alert("用户名或密码不能为空");
 					return;
 				}
+				password = jsencrypt("123@Abc",password); 
 				var autoLogin = document.getElementById("autoLogin").classList.contains("mui-active");
-				var url='http://api.cheshibang.com/api/Organization/Login?userName='+username+'&password='+pwd;
+				var url='http://api.cheshibang.com/api/Organization/Login?userName='+username+'&password='+password;
 				if (autoLogin) {
 					mui.ajax(url, {
 						dataType: 'json', //服务器返回json格式数据
 						type: 'post', //HTTP请求类型
 						timeout: 10000, //超时时间设置为10秒；
-						success: function(data) {
+						success: function(data,textStatus,xhr) {
 							//服务器返回响应，根据响应结果，分析是否登录成功；
-							if(data.success)
-							{
-								plus.storage.setItem("username",username);
-							plus.storage.setItem("password",pwd);
+							plus.storage.setItem("username",username);
+							plus.storage.setItem("password",password);
 							mui.openWindow({
 								url: 'index.html'
 							});
-							}
-							else
-							{
-								mui.toast(data.message);
-							}
 						},
 						error: function(xhr, type, errorThrown) {
 							//异常处理；
@@ -278,20 +207,13 @@
 						dataType: 'json', //服务器返回json格式数据
 						type: 'post', //HTTP请求类型
 						timeout: 10000, //超时时间设置为10秒；
-						success: function(data) {
+						success: function(data,textStatus,xhr) {
 							//服务器返回响应，根据响应结果，分析是否登录成功；
-							if(data.success)
-							{
-								plus.storage.removeItem("username");
+							plus.storage.removeItem("username");
 							plus.storage.removeItem("password");
 							mui.openWindow({
 								url: 'index.html'
 							});
-							}
-							else
-							{
-								mui.toast(data.message);
-							}
 						},
 						error: function(xhr, type, errorThrown) {
 							//异常处理；

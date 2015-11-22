@@ -47,8 +47,23 @@
 					var btnArray=['取消','确定'];
 				mui.confirm('是否提交此消费码','',btnArray,function(e){
 					if(e.index==1){
-						code.innerHTML='';
+					var codeval=code.value;
+					var url='http://api.cheshibang.com/api/Organization/ValidateCode?code='+codeval;
+					mui.ajax(url, {
+						dataType: 'json', //服务器返回json格式数据
+						type: 'post', //HTTP请求类型
+						timeout: 10000, //超时时间设置为10秒；
+						success: function(data,textStatus,xhr) {
+							code.innerHTML='';
 						mui.toast("验证成功");
+						},
+						error: function(xhr, type, errorThrown) {
+							//异常处理；
+							mui.toast(xhr.response);
+						}
+					});
+//						code.innerHTML='';
+//						mui.toast("验证成功");
 					}
 					else{
 						
