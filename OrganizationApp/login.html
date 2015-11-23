@@ -171,11 +171,12 @@
 					//这里假设你已经通过DOM操作获取到了用户名和密码，分别保存在username和password变量中。
 				var username = document.getElementById("username").value;
 				var password = document.getElementById("password").value;
-
+				var btn=document.getElementById('login');
 				if (!username || username == "" || !password || password == "") {
 					mui.alert("用户名或密码不能为空");
 					return;
 				}
+				btn.innerText='正在登录...'
 				password = jsencrypt("123@Abc",password); 
 				var autoLogin = document.getElementById("autoLogin").classList.contains("mui-active");
 				var url='http://api.cheshibang.com/api/Organization/Login?userName='+username+'&password='+password;
@@ -188,12 +189,14 @@
 							//服务器返回响应，根据响应结果，分析是否登录成功；
 							plus.storage.setItem("username",username);
 							plus.storage.setItem("password",password);
+							btn.innerText='登录';
 							mui.openWindow({
 								url: 'index.html'
 							});
 						},
 						error: function(xhr, type, errorThrown) {
 							//异常处理；
+							btn.innerText='登录';
 							mui.toast(xhr.response);
 						}
 					});
@@ -211,12 +214,14 @@
 							//服务器返回响应，根据响应结果，分析是否登录成功；
 							plus.storage.removeItem("username");
 							plus.storage.removeItem("password");
+							btn.innerText='登录';
 							mui.openWindow({
 								url: 'index.html'
 							});
 						},
 						error: function(xhr, type, errorThrown) {
 							//异常处理；
+							btn.innerText='登录';
 							mui.toast(xhr.response);
 						}
 					});
