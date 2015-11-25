@@ -189,6 +189,7 @@
 							//服务器返回响应，根据响应结果，分析是否登录成功；
 							plus.storage.setItem("username",username);
 							plus.storage.setItem("password",password);
+							plus.storage.setItem("index",data);
 							btn.innerText='登录';
 							mui.openWindow({
 								url: 'index.html'
@@ -214,6 +215,7 @@
 							//服务器返回响应，根据响应结果，分析是否登录成功；
 							plus.storage.removeItem("username");
 							plus.storage.removeItem("password");
+							plus.storage.setItem("index",data);
 							btn.innerText='登录';
 							mui.openWindow({
 								url: 'index.html'
